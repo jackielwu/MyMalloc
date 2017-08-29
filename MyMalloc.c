@@ -135,9 +135,9 @@ static void * allocateObject(size_t size)
   FreeObject * curr = _freeList;
   while (!curr)
   {
-    if (curr->boundary_tag->_objectSizeAndAlloc >= real_size)
+    if (curr->boundary_tag._objectSizeAndAlloc >= real_size)
     {
-      if (curr->boundary_tag->_objectSizeAndAlloc - real_size >= sizeof(BoundaryTag))
+      if (curr->boundary_tag._objectSizeAndAlloc - real_size >= sizeof(BoundaryTag))
       {
         
       }
