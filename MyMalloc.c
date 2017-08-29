@@ -118,7 +118,12 @@ static void * allocateObject(size_t size)
   // Make sure that allocator is initialized
   if (!_initialized)
     initialize();
+  
 
+  size_t alloc_size = size + sizeof(BoundaryTag);
+  // Round up requested size to next 8 byte
+  alloc_size = alloc_size + (8 - (alloc_size % 8));
+  
   pthread_mutex_unlock(&mutex);
   return getMemoryFromOS(size);
 }
