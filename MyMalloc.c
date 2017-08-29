@@ -136,12 +136,12 @@ static void * allocateObject(size_t size)
   FreeObject * curr = _freeList;
   while (!curr)
   {
-    if (getSize(curr->boundary_tag) >= real_size)
+    if (getSize(&(curr->boundary_tag)) >= real_size)
     {
-      if (getSize(curr->boundary_tag) - real_size >= sizeof(FreeObject))
+      if (getSize(&(curr->boundary_tag)) - real_size >= sizeof(FreeObject))
       {
         // Calculate the first memory position
-        void * new_obj = curr + (getSize(curr->boundary_tag) - real_size);
+        void * new_obj = curr + (getSize(&(curr->boundary_tag)) - real_size);
         setSize((BoundaryTag) new_obj, obj_size);
         
       }
