@@ -125,20 +125,24 @@ static void * allocateObject(size_t size)
      size = sizeof(FreeObject);
   }
 
-  size_t real_size = size; 
+  size_t obj_size = size;
+  size_t real_size = size;
   // Round up requested size to next 8 byte
-  real_size = size + (8 - (size % 8));
+  obj_size = size + (8 - (size % 8));
 
   // Add size of the block's header
-  real_size = real_size + sizeof(BoundaryTag);
+  real_size = obj_size + sizeof(BoundaryTag);
 
   FreeObject * curr = _freeList;
   while (!curr)
   {
-    if (curr->boundary_tag._objectSizeAndAlloc >= real_size)
+    if (getSize(curr->boundary_tag) >= real_size)
     {
-      if (curr->boundary_tag._objectSizeAndAlloc - real_size >= sizeof(BoundaryTag))
+      if (getSize(curr->boundary_tag) - real_size >= sizeof(FreeObject))
       {
+        // Calculate the first memory position
+        void * new_obj = curr + (getSize(curr->boundary_tag) - real_size);
+        setSize((BoundaryTag) new_obj, obj_size);
         
       }
     }
