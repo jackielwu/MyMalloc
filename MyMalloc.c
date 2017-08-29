@@ -142,7 +142,7 @@ static void * allocateObject(size_t size)
       {
         // Calculate the first memory position
         void * new_obj = curr + (getSize(&(curr->boundary_tag)) - real_size);
-        setSize(&(BoundaryTag) new_obj, obj_size);
+        setSize(&((BoundaryTag) new_obj), obj_size);
         
       }
     }
