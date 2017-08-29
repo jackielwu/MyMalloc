@@ -119,10 +119,35 @@ static void * allocateObject(size_t size)
   if (!_initialized)
     initialize();
   
+  // Min alloc size FreeObject
+  if (size < sizeof(FreeObject)
+  {
+     size = sizeof(FreeObject);
+  }
 
-  size_t alloc_size = size + sizeof(BoundaryTag);
+  size_t real_size = size; 
   // Round up requested size to next 8 byte
-  alloc_size = alloc_size + (8 - (alloc_size % 8));
+  real_size = size + (8 - (size % 8));
+
+  // Add size of the block's header
+  real_size = real_size + sizeof(BoundaryTag);
+
+  FreeObject * curr = _freeList;
+  while (!curr)
+  {
+    if (curr->boundary_tag->_objectSizeAndAlloc >= real_size)
+    {
+      if (curr->boundary_tag->_objectSizeAndAlloc - real_size >= sizeof(BoundaryTag))
+      {
+        
+      }
+    }
+    else
+    {
+      curr = curr->free_list_node->_next;
+    }
+  }
+  
   
   pthread_mutex_unlock(&mutex);
   return getMemoryFromOS(size);
