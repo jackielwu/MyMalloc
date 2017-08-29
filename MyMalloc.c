@@ -144,7 +144,7 @@ static void * allocateObject(size_t size)
     }
     else
     {
-      curr = curr->free_list_node->_next;
+      curr = curr->free_list_node._next;
     }
   }
   
