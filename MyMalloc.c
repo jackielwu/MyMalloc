@@ -120,7 +120,7 @@ static void * allocateObject(size_t size)
     initialize();
   
   // Min alloc size FreeObject
-  if (size < sizeof(FreeObject)
+  if (size < sizeof(FreeObject))
   {
      size = sizeof(FreeObject);
   }
