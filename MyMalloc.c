@@ -133,8 +133,8 @@ static void * allocateObject(size_t size)
   // Add size of the block's header
   real_size = obj_size + sizeof(BoundaryTag);
 
-  FreeObject * curr = _freeList;
-  while (!curr)
+  FreeObject * curr = _freeList->free_list_node._next;
+  while (curr != &_freeListSentinel)
   {
     if (getSize(&(curr->boundary_tag)) >= real_size)
     {
