@@ -145,10 +145,10 @@ static void * allocateObject(size_t size)
         setSize((BoundaryTag *) new_obj, obj_size);
         setAllocated((BoundaryTag *) new_obj, 1);
         // Modify free block header
-        setSize((BoundaryTag *) curr->boundary_tag, (getSize(&(curr->boundary_tag)) - real_size));
+        setSize((BoundaryTag *) &curr->boundary_tag, (getSize(&(curr->boundary_tag)) - real_size));
       }
       else {
-        setAllocated((BoundaryTag *) curr->boundary_tag, 1);
+        setAllocated((BoundaryTag *) &curr->boundary_tag, 1);
         curr->free_list_node._prev->_next = curr->free_list_node._next;
         curr->free_list_node._next->_prev = curr->free_list_node._prev;
         curr;
