@@ -149,9 +149,9 @@ static void * allocateObject(size_t size)
       }
       else {
         setAllocated((BoundaryTag *) &curr->boundary_tag, 1);
-        curr->free_list_node._prev->_next = curr->free_list_node._next;
-        curr->free_list_node._next->_prev = curr->free_list_node._prev;
-        curr;
+        curr->free_list_node._prev->free_list_node._next = curr->free_list_node._next;
+        curr->free_list_node._next->free_list_node._prev = curr->free_list_node._prev;
+        return curr;
       }
     }
     else
