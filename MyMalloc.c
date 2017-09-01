@@ -119,7 +119,8 @@ static void * allocateObject(size_t size)
   if (!_initialized)
     initialize();
   
-
+  if (size == 0)
+    return NULL;
   size_t obj_size = size;
   size_t real_size = size;
   // Round up requested size to next 8 byte
