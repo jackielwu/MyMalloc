@@ -177,7 +177,7 @@ static void * allocateObject(size_t size)
   _freeList->free_list_node._next = newChunk;
  
 
-  return allocateObjevt(size);
+  return allocateObject(size);
 }
 
 /**
