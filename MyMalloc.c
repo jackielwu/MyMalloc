@@ -196,6 +196,23 @@ static void * allocateObject(size_t size)
  */
 static void freeObject(void *ptr)
 {
+  BoundaryTag *obj_head = ((char *)ptr) - sizeof(BoundaryTag);
+  BoundaryTag *next_head = ((char *)obj_head) + obj_head->_objectSizeAndAlloc;
+  
+  //check if next block is free
+  if (!isAllocated(next_head))
+  {
+    obj_head->_objectSizeAndAlloc += sizeof(BoundaryTag) + next_head->_objectSizeAndAlloc;
+    (((char *)obj_head) + obj_head->_objectSizeAndAlloc)->_leftObjectSize = obj_head->_objectSizeAndAlloc;
+  }
+  //check if prev block is free
+  BoundaryTag *prev_head = ((char *)obj_head) + obj_head->_leftObjectSize + sizeof(BoundaryTag);
+  if (!isAllocated(prev_head))
+  {
+
+  } 
+
+
   return;
 }
 
