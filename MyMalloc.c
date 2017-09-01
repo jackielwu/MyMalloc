@@ -119,11 +119,6 @@ static void * allocateObject(size_t size)
   if (!_initialized)
     initialize();
   
-  // Min alloc size FreeObject
-  if (size < sizeof(FreeObject))
-  {
-     size = sizeof(FreeObject);
-  }
 
   size_t obj_size = size;
   size_t real_size = size;
@@ -140,6 +135,11 @@ static void * allocateObject(size_t size)
   // Add size of the block's header
   real_size = obj_size + sizeof(BoundaryTag);
 
+  // Min alloc size
+  if(real_size < sizeof(FreeObject))
+  {
+    real_size = sizeof(FreeObject);
+  }
   FreeObject * curr = _freeList->free_list_node._next;
   while (curr != &_freeListSentinel)
   {
