@@ -120,7 +120,10 @@ static void * allocateObject(size_t size)
     initialize();
   
   if (size == 0)
+  {
+    pthread_mutex_unlock(&mutex);
     return NULL;
+  }
   size_t obj_size = size;
   size_t real_size = size;
   // Round up requested size to next 8 byte
@@ -136,6 +139,7 @@ static void * allocateObject(size_t size)
   if(obj_size > ARENA_SIZE - (3*sizeof(BoundaryTag)))
   {
     errno = ENOMEM;
+    pthread_mutex_unlock(&mutex);
     return NULL;
   }
 
@@ -160,12 +164,14 @@ static void * allocateObject(size_t size)
         setAllocated((BoundaryTag *) new_obj, 1);
         // Modify free block header
         setSize((BoundaryTag *) &curr->boundary_tag, (getSize(&(curr->boundary_tag)) - real_size));
+        pthread_mutex_unlock(&mutex);
         return ((char *)new_obj) + sizeof(BoundaryTag);
       }
       else {
         setAllocated((BoundaryTag *) &curr->boundary_tag, 1);
         curr->free_list_node._prev->free_list_node._next = curr->free_list_node._next;
         curr->free_list_node._next->free_list_node._prev = curr->free_list_node._prev;
+        pthread_mutex_unlock(&mutex);
         return ((char *)curr) + sizeof(BoundaryTag);
       }
     }
@@ -183,7 +189,7 @@ static void * allocateObject(size_t size)
   _freeList->free_list_node._next->free_list_node._prev = newChunk;
   _freeList->free_list_node._next = newChunk;
  
-
+  pthread_mutex_unlock(&mutex);
   return allocateObject(size);
 }
 
@@ -201,16 +207,20 @@ static void freeObject(void *ptr)
   BoundaryTag *next_head = (BoundaryTag *)(((char *)obj_head) + obj_head->_objectSizeAndAlloc);
   
   //check if next block is free
-  if (!isAllocated(next_head))
+  if (!isAllocated(next_head) && next_head->boundary_tag._objectSizeAndAlloc != 0)
   {
     obj_head->_objectSizeAndAlloc += sizeof(BoundaryTag) + next_head->_objectSizeAndAlloc;
     ((BoundaryTag *)((char *)obj_head) + obj_head->_objectSizeAndAlloc)->_leftObjectSize = obj_head->_objectSizeAndAlloc;
   }
   //check if prev block is free
-  BoundaryTag *prev_head = (BoundaryTag *)(((char *)obj_head) + obj_head->_leftObjectSize + sizeof(BoundaryTag));
-  if (!isAllocated(prev_head))
+  if (obj_head->boundary_tag._leftObjectSize != 0)
   {
+    BoundaryTag *prev_head = (BoundaryTag *)(((char *)obj_head) + obj_head->_leftObjectSize + sizeof(BoundaryTag));
+    if (!isAllocated(prev_head))
+    {
+      prev_head->boundary_tag._objectSizeAndAlloc = prev_head->boundary_tag._objectSizeAndAlloc + obj_head->boundary_tag._objectSizeAndAlloc + sizeof(BoundaryTag);
 
+    }
   } 
 
 
@@ -264,7 +274,7 @@ extern void * malloc(size_t size)
   increaseMallocCalls();
   
   void * addr =  allocateObject(size);
-  pthread_mutex_unlock(&mutex);
+  //pthread_mutex_unlock(&mutex);
   return addr;
 }
 
