@@ -128,7 +128,14 @@ static void * allocateObject(size_t size)
   size_t obj_size = size;
   size_t real_size = size;
   // Round up requested size to next 8 byte
-  obj_size = size + (8 - (size % 8));
+  if (size % 8 == 0)
+  {
+    obj_size = size;
+  }
+  else
+  {
+    obj_size = size + (8 - (size % 8));
+  }
 
   // Add size of the block's header
   real_size = obj_size + sizeof(BoundaryTag);
