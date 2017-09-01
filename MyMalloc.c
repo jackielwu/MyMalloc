@@ -175,9 +175,9 @@ static void * allocateObject(size_t size)
   newChunk->free_list_node._prev = _freeList;
   _freeList->free_list_node._prev = newChunk;
   _freeList->free_list_node._next = newChunk;
-  
-  pthread_mutex_unlock(&mutex);
-  return getMemoryFromOS(size);
+ 
+
+  return allocateObjevt(size);
 }
 
 /**
@@ -239,7 +239,9 @@ extern void * malloc(size_t size)
   pthread_mutex_lock(&mutex);
   increaseMallocCalls();
   
-  return allocateObject(size);
+  void * addr =  allocateObject(size);
+  pthread_mutex_unlock(&mutex);
+  return addr;
 }
 
 extern void free(void *ptr)
