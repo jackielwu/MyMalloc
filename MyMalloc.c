@@ -178,9 +178,9 @@ static void * allocateObject(size_t size)
   setSize(&newChunk->boundary_tag, ARENA_SIZE - (2*sizeof(BoundaryTag)));
   newChunk->boundary_tag._leftObjectSize = 0;
   setAllocated(&newChunk->boundary_tag, NOT_ALLOCATED);
-  newChunk->free_list_node._next = _freeList;
+  newChunk->free_list_node._next = _freeList->free_list_node._next;
   newChunk->free_list_node._prev = _freeList;
-  _freeList->free_list_node._prev = newChunk;
+  _freeList->free_list_node._next->free_list_node._prev = newChunk;
   _freeList->free_list_node._next = newChunk;
  
 
