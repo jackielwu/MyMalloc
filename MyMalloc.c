@@ -203,10 +203,10 @@ static void freeObject(void *ptr)
   if (!isAllocated(next_head))
   {
     obj_head->_objectSizeAndAlloc += sizeof(BoundaryTag) + next_head->_objectSizeAndAlloc;
-    (((char *)obj_head) + obj_head->_objectSizeAndAlloc)->_leftObjectSize = obj_head->_objectSizeAndAlloc;
+    (BoundaryTag *)(((char *)obj_head) + obj_head->_objectSizeAndAlloc)->_leftObjectSize = obj_head->_objectSizeAndAlloc;
   }
   //check if prev block is free
-  BoundaryTag *prev_head = ((char *)obj_head) + obj_head->_leftObjectSize + sizeof(BoundaryTag);
+  BoundaryTag *prev_head = (BoundaryTag *)(((char *)obj_head) + obj_head->_leftObjectSize + sizeof(BoundaryTag));
   if (!isAllocated(prev_head))
   {
 
