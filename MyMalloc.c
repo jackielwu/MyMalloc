@@ -208,7 +208,7 @@ static void freeObject(void *ptr)
 {
   
   BoundaryTag *obj_head = (BoundaryTag *)(((char *)ptr) - sizeof(BoundaryTag));
-  BoundaryTag *next_head = (BoundaryTag *)(((char *)obj_head) + obj_head->_objectSizeAndAlloc);
+  BoundaryTag *next_head = (BoundaryTag *)(((char *)obj_head) + getSize(obj_head);
   
   FreeObject *newfree = (FreeObject *) obj_head;
   
@@ -216,9 +216,9 @@ static void freeObject(void *ptr)
   if (!isAllocated(next_head))
   {
     // coalese next block into curr
-    obj_head->_objectSizeAndAlloc += sizeof(BoundaryTag) + next_head->_objectSizeAndAlloc;
+    setSize(obj_head, sizeof(BoundaryTag) + getSize(next_head));
     // change size of next next
-    ((BoundaryTag *)((char *)obj_head) + obj_head->_objectSizeAndAlloc)->_leftObjectSize = obj_head->_objectSizeAndAlloc + sizeof(BoundaryTag);
+    ((BoundaryTag *)((char *)obj_head) + getSize(obj_head))->_leftObjectSize = getSize(obj_head) + sizeof(BoundaryTag);
 
     // remove next block from free list
     FreeObject *next = (FreeObject *) next_head;
@@ -227,13 +227,13 @@ static void freeObject(void *ptr)
   }
   // calculate prev position
 
-  BoundaryTag *prev_head = (BoundaryTag *)((char *)obj_head) - obj_head->_leftObjectSize;
+  BoundaryTag *prev_head = ((char *)obj_head) - obj_head->_leftObjectSize;
   //check if prev block is free
   if (!isAllocated(prev_head))
   {
     // coalese curr into prev
-    prev_head->_objectSizeAndAlloc = prev_head->_objectSizeAndAlloc + obj_head->_objectSizeAndAlloc + sizeof(BoundaryTag);
-    ((BoundaryTag *)((char *)prev_head) + prev_head->_objectSizeAndAlloc)->_leftObjectSize = prev_head->_objectSizeAndAlloc + sizeof(BoundaryTag);
+    setSize(prev_head, getSize(prev_head) + getSize(obj_head) + sizeof(BoundaryTag));
+    ((BoundaryTag *)((char *)prev_head) + getSize(prev_head))->_leftObjectSize = getSize(prev_head) + sizeof(BoundaryTag);
     
     pthread_mutex_unlock(&mutex);
     return;  
