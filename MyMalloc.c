@@ -247,7 +247,7 @@ static void freeObject(void *ptr)
 
   // modify left object size for just new free
 
-  ((BoundaryTag *)((char *)obj_head) + getSize(obj_head))->_leftObjectSize = getSize(obj_head) + sizeof(BoundaryTag);
+  ((BoundaryTag *)((char *)obj_head) + getSize(obj_head))->_leftObjectSize = getSize(obj_head);
 
 
   // add newly freed to free list
