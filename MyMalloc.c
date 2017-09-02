@@ -215,8 +215,13 @@ static void freeObject(void *ptr)
   {
     // coalese next block into curr
     obj_head->_objectSizeAndAlloc += sizeof(BoundaryTag) + next_head->_objectSizeAndAlloc;
-    // change size of curr
-    ((BoundaryTag *)((char *)obj_head) + obj_head->_objectSizeAndAlloc)->_leftObjectSize = obj_head->_objectSizeAndAlloc;
+    // change size of next next
+    ((BoundaryTag *)((char *)obj_head) + obj_head->_objectSizeAndAlloc)->_leftObjectSize = obj_head->_objectSizeAndAlloc + sizeof(BoundaryTag);
+
+    // remove next block from free list
+    FreeObject *next = (FreeObject *) next_head;
+    next->free_list_node._prev = next->free_list_node._next;
+    next->free_list_node._next = next->free_list_node._prev;
   }
   // calculate prev position
 
@@ -226,7 +231,7 @@ static void freeObject(void *ptr)
   {
     // coalese curr into prev
     prev_head->_objectSizeAndAlloc = prev_head->_objectSizeAndAlloc + obj_head->_objectSizeAndAlloc + sizeof(BoundaryTag);
-      
+    ((BoundaryTag *)((char *)prev_head) + prev_head->_objectSizeAndAlloc)->_leftObjectSize = prev_head->_objectSizeAndAlloc + sizeof(BoundaryTag);  
   } 
 
 
