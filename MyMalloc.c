@@ -216,7 +216,7 @@ static void freeObject(void *ptr)
   if (!isAllocated(next_head))
   {
     // coalese next block into curr
-    setSize(obj_head, sizeof(BoundaryTag) + getSize(next_head));
+    setSize(obj_head, getSize(obj_head) + sizeof(BoundaryTag) + getSize(next_head));
     // change size of next next
     ((BoundaryTag *)((char *)obj_head) + getSize(obj_head))->_leftObjectSize = getSize(obj_head) + sizeof(BoundaryTag);
 
