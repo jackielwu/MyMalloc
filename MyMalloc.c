@@ -161,7 +161,7 @@ static void * allocateObject(size_t size)
         // Calculate the first memory position
         void * new_obj = ((char *)curr) + (getSize(&(curr->boundary_tag)) - real_size);
         setSize((BoundaryTag *) new_obj, obj_size);
-        setAllocated((BoundaryTag *) new_obj, 1);
+        setAllocated((BoundaryTag *) new_obj, ALLOCATED);
 
         ((BoundaryTag *) new_obj)->_leftObjectSize = getSize(&(curr->boundary_tag)) - real_size;
         // Modify free block header
@@ -170,7 +170,7 @@ static void * allocateObject(size_t size)
         return ((char *)new_obj) + sizeof(BoundaryTag);
       }
       else {
-        setAllocated((BoundaryTag *) &curr->boundary_tag, 1);
+        setAllocated((BoundaryTag *) &curr->boundary_tag, NOT_ALLOCATED);
         curr->free_list_node._prev->free_list_node._next = curr->free_list_node._next;
         curr->free_list_node._next->free_list_node._prev = curr->free_list_node._prev;
         pthread_mutex_unlock(&mutex);
