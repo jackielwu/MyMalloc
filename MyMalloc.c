@@ -233,6 +233,8 @@ static void freeObject(void *ptr)
   {
     // coalese curr into prev
     setSize(prev_head, getSize(prev_head) + getSize(obj_head) + sizeof(BoundaryTag));
+    
+    // modify left object size for prev coalese
     ((BoundaryTag *)((char *)prev_head) + getSize(prev_head))->_leftObjectSize = getSize(prev_head) + sizeof(BoundaryTag);
     
     pthread_mutex_unlock(&mutex);
@@ -241,6 +243,14 @@ static void freeObject(void *ptr)
  
   
   setAllocated(&(newfree->boundary_tag), NOT_ALLOCATED);
+  
+
+  // modify left object size for just new free
+
+  ((BoundaryTag *)((char *)obj_head) + getSize(obj_head))->_leftObjectSize = getSize(obj_head) + sizeof(BoundaryTag);
+
+
+  // add newly freed to free list
   newfree->free_list_node._next = _freeList->free_list_node._next;
   newfree->free_list_node._prev = _freeList;
   _freeList->free_list_node._next->free_list_node._prev = newfree;
