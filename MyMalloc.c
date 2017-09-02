@@ -209,7 +209,7 @@ static void freeObject(void *ptr)
   
   BoundaryTag *obj_head = (BoundaryTag *)(((char *)ptr) - sizeof(BoundaryTag));
   BoundaryTag *next_head = (BoundaryTag *)(((char *)obj_head) + obj_head->_objectSizeAndAlloc);
-  
+  setAllocated(obj_head, NOT_ALLOCATED); 
   //check if next block is free
   if (!isAllocated(next_head))
   {
@@ -234,7 +234,7 @@ static void freeObject(void *ptr)
     ((BoundaryTag *)((char *)prev_head) + prev_head->_objectSizeAndAlloc)->_leftObjectSize = prev_head->_objectSizeAndAlloc + sizeof(BoundaryTag);  
   } 
 
-
+  pthread_mutex_unlock(&mutex);
   return;
 }
 
