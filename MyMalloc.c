@@ -213,7 +213,7 @@ static void freeObject(void *ptr)
   //check if next block is free
   if (!isAllocated(next_head) && next_head->_objectSizeAndAlloc != 0)
   {
-    // coelese next block into curr
+    // coalese next block into curr
     obj_head->_objectSizeAndAlloc += sizeof(BoundaryTag) + next_head->_objectSizeAndAlloc;
     // change size of curr
     ((BoundaryTag *)((char *)obj_head) + obj_head->_objectSizeAndAlloc)->_leftObjectSize = obj_head->_objectSizeAndAlloc;
@@ -225,7 +225,7 @@ static void freeObject(void *ptr)
     BoundaryTag *prev_head = (BoundaryTag *)(((char *)obj_head) + obj_head->_leftObjectSize + sizeof(BoundaryTag));
     if (!isAllocated(prev_head))
     {
-      // coelese curr into prev
+      // coalese curr into prev
       prev_head->_objectSizeAndAlloc = prev_head->_objectSizeAndAlloc + obj_head->_objectSizeAndAlloc + sizeof(BoundaryTag);
       
     }
