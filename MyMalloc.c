@@ -233,6 +233,8 @@ static void freeObject(void *ptr)
     prev_head->_objectSizeAndAlloc = prev_head->_objectSizeAndAlloc + obj_head->_objectSizeAndAlloc + sizeof(BoundaryTag);
     ((BoundaryTag *)((char *)prev_head) + prev_head->_objectSizeAndAlloc)->_leftObjectSize = prev_head->_objectSizeAndAlloc + sizeof(BoundaryTag);  
   } 
+  
+
 
   pthread_mutex_unlock(&mutex);
   return;
