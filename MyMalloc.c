@@ -166,7 +166,7 @@ static void * allocateObject(size_t size)
 
         ((BoundaryTag *) new_obj)->_leftObjectSize = getSize(&(curr->boundary_tag)) - real_size;
         // Modify free block header
-        setSize((BoundaryTag *) curr->boundary_tag, (getSize(&(curr->boundary_tag)) - real_size));
+        setSize((BoundaryTag *) &curr->boundary_tag, (getSize(&(curr->boundary_tag)) - real_size));
         pthread_mutex_unlock(&mutex);
         return ((char *)new_obj) + sizeof(BoundaryTag);
       }
