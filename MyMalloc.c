@@ -136,7 +136,9 @@ static void * allocateObject(size_t size)
     obj_size = size + (8 - (size % 8));
   }
   
-  if(obj_size > ARENA_SIZE - (3*sizeof(BoundaryTag)))
+  real_size = obj_size + sizeof(BoundaryTag);
+
+  if(real_size > ARENA_SIZE - (3*sizeof(BoundaryTag)))
   {
     errno = ENOMEM;
     //pthread_mutex_unlock(&mutex);
@@ -144,7 +146,6 @@ static void * allocateObject(size_t size)
   }
 
   // Add size of the block's header
-  real_size = obj_size + sizeof(BoundaryTag);
 
   // Min alloc size
   if(real_size < sizeof(FreeObject))
