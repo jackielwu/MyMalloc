@@ -207,8 +207,8 @@ static void * allocateObject(size_t size)
 static void freeObject(void *ptr)
 {
   
-  BoundaryTag *obj_head = (BoundaryTag *)(((char *)ptr) - sizeof(BoundaryTag));
-  BoundaryTag *next_head = (BoundaryTag *)(((char *)obj_head) + getSize(obj_head);
+  BoundaryTag *obj_head = ((char *)ptr) - sizeof(BoundaryTag);
+  BoundaryTag *next_head = ((char *)obj_head) + getSize(obj_head);
   
   FreeObject *newfree = (FreeObject *) obj_head;
   
