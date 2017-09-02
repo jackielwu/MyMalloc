@@ -208,7 +208,7 @@ static void freeObject(void *ptr)
 {
   
   BoundaryTag *obj_head = (BoundaryTag *)(((char *)ptr) - sizeof(BoundaryTag));
-  BoundaryTag *next_head = (BoundaryTag *)(((char *)obj_head) + getSize(obj_head));
+  BoundaryTag *next_head = (BoundaryTag *)(((char *)obj_head) + sizeof(BoundaryTag) + getSize(obj_head));
   
   FreeObject *newfree = (FreeObject *) obj_head;
   
@@ -216,9 +216,9 @@ static void freeObject(void *ptr)
   if (!isAllocated(next_head))
   {
     // coalese next block into curr
-    setSize(obj_head, getSize(obj_head) + getSize(next_head));
+    setSize(obj_head, getSize(obj_head) + sizeof(BoundaryTag) + getSize(next_head));
     // change size of next next
-    ((BoundaryTag *)((char *)obj_head) + getSize(obj_head))->_leftObjectSize = getSize(obj_head);
+    ((BoundaryTag *)((char *)obj_head) + getSize(obj_head))->_leftObjectSize = sizeof(BoundaryTag) + getSize(obj_head);
 
     // remove next block from free list
     FreeObject *next = (FreeObject *) next_head;
@@ -232,10 +232,10 @@ static void freeObject(void *ptr)
   if (!isAllocated(prev_head))
   {
     // coalese curr into prev
-    setSize(prev_head, getSize(prev_head) + getSize(obj_head));
+    setSize(prev_head, getSize(prev_head) + sizeof(BoundaryTag) + getSize(obj_head));
     
     // modify left object size for prev coalese
-    ((BoundaryTag *)((char *)prev_head) + getSize(prev_head))->_leftObjectSize = getSize(prev_head);
+    ((BoundaryTag *)((char *)prev_head) + getSize(prev_head))->_leftObjectSize = sizeof(BoundaryTag) + getSize(prev_head);
     
     pthread_mutex_unlock(&mutex);
     return;  
