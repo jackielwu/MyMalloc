@@ -209,7 +209,9 @@ static void freeObject(void *ptr)
   
   BoundaryTag *obj_head = (BoundaryTag *)(((char *)ptr) - sizeof(BoundaryTag));
   BoundaryTag *next_head = (BoundaryTag *)(((char *)obj_head) + obj_head->_objectSizeAndAlloc);
-  setAllocated(obj_head, NOT_ALLOCATED); 
+  
+  FreeObject *newfree = (FreeObject *) obj_head;
+  
   //check if next block is free
   if (!isAllocated(next_head))
   {
@@ -231,10 +233,18 @@ static void freeObject(void *ptr)
   {
     // coalese curr into prev
     prev_head->_objectSizeAndAlloc = prev_head->_objectSizeAndAlloc + obj_head->_objectSizeAndAlloc + sizeof(BoundaryTag);
-    ((BoundaryTag *)((char *)prev_head) + prev_head->_objectSizeAndAlloc)->_leftObjectSize = prev_head->_objectSizeAndAlloc + sizeof(BoundaryTag);  
+    ((BoundaryTag *)((char *)prev_head) + prev_head->_objectSizeAndAlloc)->_leftObjectSize = prev_head->_objectSizeAndAlloc + sizeof(BoundaryTag);
+    
+    pthread_mutex_unlock(&mutex);
+    return;  
   } 
+ 
   
-
+  setAllocated(&(newfree->boundary_tag), NOT_ALLOCATED);
+  newfree->free_list_node._next = _freeList->free_list_node._next;
+  newfree->free_list_node._prev = _freeList;
+  _freeList->free_list_node._next->free_list_node._prev = newfree;
+  _freeList->free_list_node._next = newfree;
 
   pthread_mutex_unlock(&mutex);
   return;
