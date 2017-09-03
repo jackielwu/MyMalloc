@@ -235,7 +235,7 @@ static void freeObject(void *ptr)
     setSize(prev_head, getSize(prev_head) + sizeof(BoundaryTag) + getSize(obj_head));
     
     // modify left object size for prev coalese
-    (BoundaryTag *)(((char *)prev_head) + getSize(prev_head))->_leftObjectSize = sizeof(BoundaryTag) + getSize(prev_head);
+    ((BoundaryTag *)(((char *)prev_head) + getSize(prev_head)))->_leftObjectSize = sizeof(BoundaryTag) + getSize(prev_head);
     
     pthread_mutex_unlock(&mutex);
     return;  
