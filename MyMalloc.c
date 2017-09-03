@@ -218,7 +218,7 @@ static void freeObject(void *ptr)
     // coalese next block into curr
     setSize(obj_head, getSize(obj_head) + sizeof(BoundaryTag) + getSize(next_head));
     
-    BoundaryTag *modnext_head = (BoundaryTag*)( ((char *)obj_head) + getSize(obj_head));
+    BoundaryTag *modnext_head = (BoundaryTag*)(((char *)obj_head) + getSize(obj_head));
     // change size of next next
     modnext_head->_leftObjectSize = sizeof(BoundaryTag) + getSize(obj_head);
 
@@ -236,8 +236,10 @@ static void freeObject(void *ptr)
     // coalese curr into prev
     setSize(prev_head, getSize(prev_head) + sizeof(BoundaryTag) + getSize(obj_head));
     
+    BoundaryTag *modprev_head = (BoundaryTag *)(((char *)prev_head) + getSize(prev_head)); 
+    
     // modify left object size for prev coalese
-    ((BoundaryTag *)(((char *)prev_head) + getSize(prev_head)))->_leftObjectSize = sizeof(BoundaryTag) + getSize(prev_head);
+    modprev_head->_leftObjectSize = sizeof(BoundaryTag) + getSize(prev_head);
     
     pthread_mutex_unlock(&mutex);
     return;  
