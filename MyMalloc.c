@@ -217,8 +217,10 @@ static void freeObject(void *ptr)
   {
     // coalese next block into curr
     setSize(obj_head, getSize(obj_head) + sizeof(BoundaryTag) + getSize(next_head));
+    
+    BoundaryTag *modnext_head = (BoundaryTag*)( ((char *)obj_head) + getSize(obj_head));
     // change size of next next
-    ((BoundaryTag *)(((char *)obj_head) + getSize(obj_head)))->_leftObjectSize = sizeof(BoundaryTag) + getSize(obj_head);
+    modnext_head->_leftObjectSize = sizeof(BoundaryTag) + getSize(obj_head);
 
     // remove next block from free list
     FreeObject *next = (FreeObject *) next_head;
