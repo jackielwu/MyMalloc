@@ -227,7 +227,7 @@ static void freeObject(void *ptr)
   }
   // calculate prev position
 
-  BoundaryTag *prev_head = (BoundaryTag *)((char *)obj_head) - obj_head->_leftObjectSize;
+  BoundaryTag *prev_head = (BoundaryTag *)(((char *)obj_head) - obj_head->_leftObjectSize);
   //check if prev block is free
   if (!isAllocated(prev_head))
   {
