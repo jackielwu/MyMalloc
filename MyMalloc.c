@@ -161,10 +161,12 @@ static void * allocateObject(size_t size)
       {
         // Calculate the first memory position
         void * new_obj = ((char *)curr) + (getSize(&(curr->boundary_tag)) - real_size);
-        setSize((BoundaryTag *) new_obj, obj_size);
+        setSize((BoundaryTag *) new_obj, real_size);
         setAllocated((BoundaryTag *) new_obj, ALLOCATED);
 
         ((BoundaryTag *) new_obj)->_leftObjectSize = getSize(&(curr->boundary_tag)) - real_size;
+        ((char *) new_obj) + (BoundaryTag *)new_obj->getSize(new_obj)->
+        
         // Modify free block header
         setSize((BoundaryTag *) &curr->boundary_tag, (getSize(&(curr->boundary_tag)) - real_size));
         pthread_mutex_unlock(&mutex);
@@ -208,7 +210,7 @@ static void freeObject(void *ptr)
 {
   
   BoundaryTag *obj_head = (BoundaryTag *)(((char *)ptr) - sizeof(BoundaryTag));
-  BoundaryTag *next_head = (BoundaryTag *)(((char *)obj_head) + sizeof(BoundaryTag) + getSize(obj_head));
+  BoundaryTag *next_head = (BoundaryTag *)(((char *)obj_head) + getSize(obj_head));
   
   FreeObject *newfree = (FreeObject *) obj_head;
   
@@ -216,11 +218,11 @@ static void freeObject(void *ptr)
   if (!isAllocated(next_head))
   {
     // coalese next block into curr
-    setSize(obj_head, getSize(obj_head) + sizeof(BoundaryTag) + getSize(next_head));
+    setSize(obj_head, getSize(obj_head) + getSize(next_head));
     
-    BoundaryTag *modnext_head = (BoundaryTag*)(((char *)obj_head) + sizeof(BoundaryTag) + getSize(obj_head));
+    BoundaryTag *modnext_head = (BoundaryTag*)(((char *)obj_head) + getSize(obj_head));
     // change size of next next
-    modnext_head->_leftObjectSize = sizeof(BoundaryTag) + getSize(obj_head);
+    modnext_head->_leftObjectSize = getSize(obj_head);
 
     // remove next block from free list
     FreeObject *next = (FreeObject *) next_head;
