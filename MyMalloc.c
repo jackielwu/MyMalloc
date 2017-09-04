@@ -169,7 +169,7 @@ static void * allocateObject(size_t size)
         
         //set left obj size for entire block?
         BoundaryTag *left_obj = ((char *) new_obj) + getSize((BoundaryTag *)new_obj);
-        left_obj->_leftObjectSize = getSize(new_obj);
+        left_obj->_leftObjectSize = getSize((BoundaryTag *)new_obj);
         
         // Modify free block header
         setSize((BoundaryTag *) &curr->boundary_tag, (getSize(&(curr->boundary_tag)) - real_size));
