@@ -236,12 +236,12 @@ static void freeObject(void *ptr)
   if (!isAllocated(prev_head))
   {
     // coalese curr into prev
-    setSize(prev_head, getSize(prev_head) + sizeof(BoundaryTag) + getSize(obj_head));
+    setSize(prev_head, getSize(prev_head) + getSize(obj_head));
     
-    BoundaryTag *modprev_head = (BoundaryTag *)(((char *)prev_head) + sizeof(BoundaryTag) + getSize(prev_head)); 
+    BoundaryTag *modprev_head = (BoundaryTag *)(((char *)prev_head) + getSize(prev_head)); 
     
     // modify left object size for prev coalese
-    modprev_head->_leftObjectSize = sizeof(BoundaryTag) + getSize(prev_head);
+    modprev_head->_leftObjectSize = getSize(prev_head);
     
     pthread_mutex_unlock(&mutex);
     return;  
@@ -253,7 +253,7 @@ static void freeObject(void *ptr)
 
   // modify left object size for just new free
 
-  ((BoundaryTag *)((char *)obj_head) + sizeof(BoundaryTag) + getSize(obj_head))->_leftObjectSize = getSize(obj_head);
+  ((BoundaryTag *)((char *)obj_head) + getSize(obj_head))->_leftObjectSize = getSize(obj_head);
 
 
   // add newly freed to free list
