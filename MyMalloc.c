@@ -230,8 +230,8 @@ static void freeObject(void *ptr)
 
     // remove next block from free list
     FreeObject *next = (FreeObject *) next_head;
-    next->free_list_node._prev = next->free_list_node._next;
-    next->free_list_node._next = next->free_list_node._prev;
+    next->free_list_node._prev->free_list_node._next = next->free_list_node._next;
+    next->free_list_node._next->free_list_node._prev = next->free_list_node._prev;
   }
   // calculate prev position
 
